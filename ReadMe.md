@@ -60,3 +60,7 @@ users:
     client-key-data: LS0t..LQo=
 
 ```
+11) install flux. Ensure the exports are in place or in bash_profile GITHUB_USER=alok.hom@gmail.com GITHUB_TOKEN=xxxxx ( check with repo or password manager)
+```
+flux bootstrap github --repository=flux --branch=main --path=clusters/dev --owner=alokhom --components-extra=image-reflector-controller,image-automation-controller
+```
