@@ -14,19 +14,26 @@ https://www.noip.com/support/knowledgebase/installing-the-linux-dynamic-update-c
 ```
  curl -sfL https://get.k3s.io | INSTALL_K3S_MIRROR=cn INSTALL_K3S_EXEC="--node-ip=192.168.0.46  --tls-san="192.168.0.46" --tls-san="*.systemtracker.no-ip.org" --tls-san="84.214.176.152" --disable servicelb,traefik --flannel-backend=none --disable-network-policy --cluster-cidr=10.16.0.0/16  --service-cidr=10.128.0.0/16" K3S_NODE_NAME="$(hostname)" sh -s - server --cluster-init
 ```
-6) cat the node token out 
-```
-cat /var/lib/rancher/k3s/server/node-token
-```
-7) use the token to install the other k8s nodes. For eg.
-```
-curl -sfL https://get.k3s.io | K3S_URL=https://192.168.0.46:6443 K3S_TOKEN=K10debc9eca32634213415ad9e66c0eda94ecf7383aa997c6079f772efc63e84828::server:b00401254d9c4817f4a9e584c19be5cf sh -
-```
-8) install calico on the master node
+6) install calico on the master node
 ```
  kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.1/manifests/calico.yaml
 ```
-9) get the kubeconfig and change the hostname to the domain you chose to have for your cluster e.g. systemtracker.no-ip.org
+7) remove all the node taints and tolerations inside the deployment of the metrics-server and keep port 4443 and readiness probe at 4443
+```
+kubectl taint nodes orangepi5 node.kubernetes.io/not-ready:NoExecute-
+kubectl taint nodes orangepi5 node.kubernetes.io/not-ready:NoSchedule-
+kubectl edit deployment/metrics-server -n kube-system
+```
+8) cat the node token out 
+```
+cat /var/lib/rancher/k3s/server/node-token
+```
+9) use the token to install the other k8s nodes. For eg.
+```
+curl -sfL https://get.k3s.io | K3S_URL=https://192.168.0.46:6443 K3S_TOKEN=K10debc9eca32634213415ad9e66c0eda94ecf7383aa997c6079f772efc63e84828::server:b00401254d9c4817f4a9e584c19be5cf sh -
+```
+
+10) get the kubeconfig and change the hostname to the domain you chose to have for your cluster e.g. systemtracker.no-ip.org
 ```
 cat /etc/rancher/k3s/k3s.yaml
 ```
