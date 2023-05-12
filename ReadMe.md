@@ -1,4 +1,4 @@
-Install k3s on oprangePi
+Install k3s on orangePi
 ---
 
 
